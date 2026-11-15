@@ -17,6 +17,7 @@ class RiegoRequest extends FormRequest
             'fecha' => ['required', 'date', 'before_or_equal:today'],
             'duracion_min' => ['required', 'integer', 'min:1'],
             'cantidad_litros' => ['required', 'numeric', 'gt:0'],
+            'sistema_riego_id' => ['nullable', 'integer', 'exists:sistemas_riego,id'],
             'observaciones' => ['nullable', 'string', 'max:255'],
         ];
     }

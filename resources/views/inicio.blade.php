@@ -12,6 +12,24 @@
 <article class="tarjeta"><div class="tarjeta-top"><h2>Alertas pendientes</h2><span class="tarjeta-icono">♧</span></div><p class="cifra">{{ number_format($resumen['alertas']) }}</p><p class="tarjeta-detalle"><a class="enlace" href="{{ route('alertas.index') }}">Consultar alertas →</a></p></article>
 <article class="tarjeta"><div class="tarjeta-top"><h2>Parcela principal</h2><span class="tarjeta-icono">⌂</span></div><p class="cifra cifra-texto">{{ $resumen['parcela'] }}</p><p class="tarjeta-detalle"><a class="enlace" href="{{ route('parcelas.index') }}">Ver detalles →</a></p></article>
 </section>
+<section class="panel irrigation-systems-summary">
+<div class="grafico-cabecera"><div><h2>Tus sistemas de riego</h2><p>Elige un sistema para consultar sus lecturas, modo y controles.</p></div><a class="enlace" href="{{ route('sistemas.index') }}">Administrar sistemas →</a></div>
+@if ($sistemas->isNotEmpty())
+<div class="system-card-grid">
+@foreach ($sistemas as $sistema)
+<a class="system-card" href="{{ route('sistemas.show', $sistema) }}">
+<span class="system-card-title">{{ $sistema->nombre }}</span>
+<span>{{ $sistema->parcela->usuario->name }}</span>
+<span>Modo: {{ strtoupper($sistema->configuracion->modo ?? 'manual') }} · Riego: {{ $sistema->riego_activo ? 'ACTIVO' : 'CERRADO' }}</span>
+<span>Integración: NO CONECTADA</span>
+<span>Última lectura de prueba: {{ $sistema->ultimaMedicion?->fecha_lectura?->format('d/m/Y H:i') ?? 'Sin lecturas' }}</span>
+</a>
+@endforeach
+</div>
+@else
+<p class="empty-note">Aún no tienes sistemas. Puedes registrar uno sin conectar hardware.</p>
+@endif
+</section>
 <div class="dashboard-grid">
 <section class="panel dashboard-chart">
 <div class="grafico-cabecera"><div><h2>Consumo de agua</h2><p>Litros registrados por día · últimos 14 días</p></div><a class="enlace" href="{{ route('estadisticas.index') }}">Ver estadísticas →</a></div>

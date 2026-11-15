@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alerta;
 use App\Models\Riego;
+use App\Models\SistemaRiego;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -37,6 +38,10 @@ class InicioController extends Controller
                 fn ($dia) => round($riegosRecientes->filter(fn ($riego) => $riego->fecha->toDateString() === $dia)->sum('cantidad_litros'), 2)
             )->values(),
             'riegosRecientes' => $riegosRecientes->sortByDesc('fecha')->take(5)->values(),
+            'sistemas' => SistemaRiego::visiblesPara($usuario)
+                ->with(['parcela.usuario', 'configuracion', 'ultimaMedicion'])
+                ->orderBy('nombre')
+                ->get(),
         ]);
     }
 }

@@ -11,7 +11,7 @@ class Riego extends Model
 {
     protected $table = 'riegos';
 
-    protected $fillable = ['parcela_id', 'fecha', 'duracion_min', 'cantidad_litros', 'observaciones'];
+    protected $fillable = ['parcela_id', 'sistema_riego_id', 'fecha', 'duracion_min', 'cantidad_litros', 'observaciones'];
 
     protected $casts = [
         'fecha' => 'date',
@@ -23,6 +23,11 @@ class Riego extends Model
         return $this->belongsTo(Parcela::class);
     }
 
+    public function sistemaRiego(): BelongsTo
+    {
+        return $this->belongsTo(SistemaRiego::class, 'sistema_riego_id');
+    }
+
     public function alertas(): HasMany
     {
         return $this->hasMany(Alerta::class);
@@ -32,6 +37,7 @@ class Riego extends Model
     {
         return $consulta
             ->when($filtros['fecha'] ?? null, fn ($q, $fecha) => $q->whereDate('fecha', $fecha))
+            ->when($filtros['sistema_riego_id'] ?? null, fn ($q, $sistemaId) => $q->where('sistema_riego_id', $sistemaId))
             ->when($filtros['q'] ?? null, fn ($q, $busqueda) => $q->where('observaciones', 'like', "%{$busqueda}%"));
     }
 

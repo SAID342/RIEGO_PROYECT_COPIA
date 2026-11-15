@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RiegoRequest;
 use App\Models\Riego;
+use App\Models\SistemaRiego;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,10 +16,17 @@ class RiegoController extends Controller
         $filtros = $request->validate([
             'fecha' => ['nullable', 'date'],
             'q' => ['nullable', 'string', 'max:100'],
+            'sistema_riego_id' => ['nullable', 'integer', 'exists:sistemas_riego,id'],
         ]);
+        if (! empty($filtros['sistema_riego_id'])) {
+            abort_unless(
+                SistemaRiego::visiblesPara($request->user())->whereKey($filtros['sistema_riego_id'])->exists(),
+                404
+            );
+        }
 
         $riegos = Riego::visiblesPara($request->user())
-            ->with('parcela')
+            ->with(['parcela', 'sistemaRiego'])
             ->filtrar($filtros)
             ->orderByDesc('fecha')
             ->orderByDesc('id')
@@ -28,6 +36,7 @@ class RiegoController extends Controller
         return view('riegos.index', [
             'riegos' => $riegos,
             'filtros' => $filtros,
+            'sistemas' => SistemaRiego::visiblesPara($request->user())->orderBy('nombre')->get(),
         ]);
     }
 
@@ -35,12 +44,16 @@ class RiegoController extends Controller
     {
         return view('riegos.form', [
             'riego' => new Riego(['fecha' => now()->toDateString()]),
+            'sistemas' => SistemaRiego::visiblesPara(request()->user())->orderBy('nombre')->get(),
         ]);
     }
 
     public function store(RiegoRequest $request): RedirectResponse
     {
-        $riego = $request->user()->parcelaPrincipal()->riegos()->create($request->validated());
+        $datos = $request->validated();
+        $sistema = $this->sistemaSeleccionado($request, $datos['sistema_riego_id'] ?? null);
+        $parcela = $sistema?->parcela ?? $request->user()->parcelaPrincipal();
+        $riego = $parcela->riegos()->create($datos);
         $riego->generarAlerta();
 
         return redirect()->route('riegos.index')->with('ok', 'Riego guardado correctamente.');
@@ -52,6 +65,7 @@ class RiegoController extends Controller
 
         return view('riegos.form', [
             'riego' => $riego,
+            'sistemas' => SistemaRiego::visiblesPara($request->user())->orderBy('nombre')->get(),
         ]);
     }
 
@@ -59,7 +73,12 @@ class RiegoController extends Controller
     {
         abort_unless($riego->perteneceA($request->user()), 403);
 
-        $riego->update($request->validated());
+        $datos = $request->validated();
+        $this->sistemaSeleccionado($request, $datos['sistema_riego_id'] ?? null);
+        if (! empty($datos['sistema_riego_id'])) {
+            $datos['parcela_id'] = SistemaRiego::findOrFail($datos['sistema_riego_id'])->parcela_id;
+        }
+        $riego->update($datos);
         $riego->generarAlerta();
 
         return redirect()->route('riegos.index')->with('ok', 'Riego actualizado correctamente.');
@@ -72,5 +91,14 @@ class RiegoController extends Controller
         $riego->delete();
 
         return redirect()->route('riegos.index')->with('ok', 'Riego eliminado correctamente.');
+    }
+
+    private function sistemaSeleccionado(Request $request, ?int $sistemaId): ?SistemaRiego
+    {
+        if ($sistemaId === null) {
+            return null;
+        }
+
+        return SistemaRiego::visiblesPara($request->user())->whereKey($sistemaId)->firstOrFail();
     }
 }

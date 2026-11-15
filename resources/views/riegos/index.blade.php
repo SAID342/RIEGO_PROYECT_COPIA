@@ -14,17 +14,29 @@
 <label for="filtro-fecha">Filtrar por fecha</label>
 <input type="date" id="filtro-fecha" name="fecha" value="{{ $filtros['fecha'] ?? '' }}">
 </div>
+@if ($sistemas->isNotEmpty())
+<div class="campo">
+<label for="filtro-sistema">Sistema</label>
+<select id="filtro-sistema" name="sistema_riego_id">
+<option value="">Todos los sistemas</option>
+@foreach ($sistemas as $sistema)
+<option value="{{ $sistema->id }}" @selected(($filtros['sistema_riego_id'] ?? '') == $sistema->id)>{{ $sistema->nombre }}</option>
+@endforeach
+</select>
+</div>
+@endif
 <button class="boton" type="submit">Buscar y filtrar</button>
 <a class="boton boton-secundario" href="{{ route('riegos.index') }}">Limpiar</a>
 </form>
 <div class="panel tabla-panel">
 <div class="tabla-scroll">
 <table>
-<thead><tr><th>Fecha</th><th>Duración</th><th>Agua utilizada</th><th>Observaciones</th><th>Acciones</th></tr></thead>
+<thead><tr><th>Fecha</th><th>Sistema</th><th>Duración</th><th>Agua utilizada</th><th>Observaciones</th><th>Acciones</th></tr></thead>
 <tbody>
 @forelse ($riegos as $riego)
 <tr>
 <td><strong>{{ $riego->fecha->format('d/m/Y') }}</strong></td>
+<td>{{ $riego->sistemaRiego?->nombre ?? 'Sin sistema asignado' }}</td>
 <td>{{ $riego->duracion_min }} min</td>
 <td @class(['alto' => $riego->esElevado()])>{{ number_format($riego->cantidad_litros, 2) }} L @if ($riego->esElevado()) <span class="etiqueta etiqueta-pendiente">Consumo elevado</span>@endif</td>
 <td>{{ $riego->observaciones ?: '—' }}</td>
@@ -38,7 +50,7 @@
 </td>
 </tr>
 @empty
-<tr><td class="vacio" colspan="5"><span class="vacio-icono" aria-hidden="true">◌</span><strong>Aún no hay riegos registrados</strong>Registra tu primer riego para comenzar a seguir el consumo.</td></tr>
+<tr><td class="vacio" colspan="6"><span class="vacio-icono" aria-hidden="true">◌</span><strong>Aún no hay riegos registrados</strong>Registra tu primer riego para comenzar a seguir el consumo.</td></tr>
 @endforelse
 </tbody>
 </table>

@@ -3028,3 +3028,282 @@ tbody tr:hover {
     overflow: auto;
   }
 }
+
+.irrigation-systems-summary,
+.system-controls {
+  margin-bottom: 22px;
+}
+
+.system-card-grid,
+.system-status-grid,
+.reading-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.system-card,
+.system-list-card,
+.reading-card,
+.system-status-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+}
+
+.system-card {
+  display: grid;
+  gap: 5px;
+  color: var(--ink-soft);
+  font-size: 0.79rem;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.system-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--green);
+}
+
+.system-card-title {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.system-create-panel {
+  margin-bottom: 18px;
+}
+
+.system-create-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+}
+
+.system-create-form .boton {
+  justify-self: start;
+}
+
+.system-list-card {
+  display: grid;
+  gap: 12px;
+}
+
+.system-list-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.system-list-heading .eyebrow {
+  margin-bottom: 4px;
+}
+
+.system-list-heading h2 {
+  margin-bottom: 0;
+}
+
+.system-facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.system-facts div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.system-facts dt {
+  color: var(--ink-soft);
+}
+
+.system-facts dd {
+  margin: 0;
+  font-weight: 650;
+  text-align: right;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.035em;
+}
+
+.status-offline {
+  background: var(--amber-pale);
+  color: var(--amber);
+}
+
+.status-test {
+  background: var(--green-pale);
+  color: var(--green-dark);
+}
+
+.system-status-grid {
+  margin-bottom: 18px;
+}
+
+.system-status-card {
+  display: flex;
+  min-height: 132px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.system-status-card > span:first-child,
+.system-status-card small,
+.reading-card > span {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.system-status-card > strong {
+  font-size: 1.15rem;
+}
+
+.system-status-card small {
+  line-height: 1.45;
+}
+
+.irrigation-status {
+  color: var(--green-dark);
+}
+
+.fresh-reading {
+  color: var(--green-dark) !important;
+}
+
+.stale-reading {
+  color: var(--red) !important;
+  font-weight: 700;
+}
+
+.control-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reading-card-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.reading-card {
+  display: flex;
+  min-height: 145px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.reading-card h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.reading-card > strong {
+  font-size: 1.2rem;
+}
+
+.days-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.days-field legend {
+  padding: 0 5px;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.day-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 7px;
+  border-radius: 7px;
+  background: var(--sand);
+  font-size: 0.77rem;
+}
+
+.day-option input {
+  accent-color: var(--green);
+}
+
+.empty-note {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.empty-note strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.empty-note p {
+  margin: 0;
+}
+
+.table-section-heading {
+  padding: 14px 0 8px;
+}
+
+.table-section-heading h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.metric-chart {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .reading-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .system-card-grid,
+  .system-status-grid,
+  .reading-card-grid,
+  .system-create-form {
+    grid-template-columns: 1fr;
+  }
+
+  .system-list-heading {
+    flex-direction: column;
+  }
+
+  .control-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .control-actions form,
+  .control-actions .boton {
+    width: 100%;
+  }
+}

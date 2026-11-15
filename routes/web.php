@@ -7,7 +7,9 @@ use App\Http\Controllers\EstadisticaController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ParcelaController;
 use App\Http\Controllers\RiegoController;
+use App\Http\Controllers\SistemaRiegoController;
 use App\Http\Controllers\UsuarioController;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [InicioController::class, 'index'])
@@ -25,7 +27,7 @@ Route::get('asistente/index.html', function () {
 
 Route::post('asistente/chat.php', function () {
     require base_path('riego-chatbot-infinityfree/public/chat.php');
-})->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+})->withoutMiddleware(ValidateCsrfToken::class)
     ->middleware('throttle:10,1')
     ->name('chatbot.message');
 
@@ -46,6 +48,14 @@ Route::middleware('auth')->group(function () {
     Route::put('cuenta/cambiar-contrasena', [AuthController::class, 'cambiarPassword'])->middleware(['active', 'password.change.required'])->name('password.update');
 
     Route::middleware(['active', 'password.change.required'])->group(function () {
+        Route::get('sistemas', [SistemaRiegoController::class, 'index'])->name('sistemas.index');
+        Route::post('sistemas', [SistemaRiegoController::class, 'store'])->name('sistemas.store');
+        Route::get('sistemas/{sistema}', [SistemaRiegoController::class, 'show'])->name('sistemas.show');
+        Route::put('sistemas/{sistema}', [SistemaRiegoController::class, 'update'])->name('sistemas.update');
+        Route::post('sistemas/{sistema}/mediciones', [SistemaRiegoController::class, 'storeMedicion'])->name('sistemas.mediciones.store');
+        Route::put('sistemas/{sistema}/configuracion', [SistemaRiegoController::class, 'updateConfiguracion'])->name('sistemas.configuracion.update');
+        Route::post('sistemas/{sistema}/iniciar', [SistemaRiegoController::class, 'iniciar'])->name('sistemas.iniciar');
+        Route::post('sistemas/{sistema}/detener', [SistemaRiegoController::class, 'detener'])->name('sistemas.detener');
         Route::get('parcelas', [ParcelaController::class, 'index'])->name('parcelas.index');
         Route::resource('riegos', RiegoController::class)->except('show');
         Route::get('estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');

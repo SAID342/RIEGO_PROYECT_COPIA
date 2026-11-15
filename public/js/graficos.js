@@ -3,17 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const crear = (id, tipo) => {
-    const lienzo = document.getElementById(id);
+  const crear = (objetivo, tipo) => {
+    const lienzo = typeof objetivo === 'string' ? document.getElementById(objetivo) : objetivo;
     if (!lienzo) {
       return;
     }
+    const unidad = lienzo.dataset.unidad || 'L';
+    const etiqueta = lienzo.dataset.titulo || 'Litros';
     new Chart(lienzo, {
       type: tipo,
       data: {
         labels: JSON.parse(lienzo.dataset.etiquetas),
         datasets: [{
-          label: 'Litros',
+          label: etiqueta,
           data: JSON.parse(lienzo.dataset.valores),
           backgroundColor: 'rgba(35, 123, 91, 0.14)',
           borderColor: '#237b5b',
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             backgroundColor: '#173a32',
             padding: 11,
             displayColors: false,
-            callbacks: { label: (contexto) => `${contexto.parsed.y} L` },
+            callbacks: { label: (contexto) => `${contexto.parsed.y} ${unidad}` },
           },
         },
         scales: {
@@ -57,4 +59,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   crear('grafico-dias', 'line');
   crear('grafico-inicio', 'line');
+  document.querySelectorAll('.metric-chart').forEach((lienzo) => crear(lienzo, 'line'));
 });

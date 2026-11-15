@@ -30,6 +30,16 @@
 <input type="text" id="observaciones" name="observaciones" maxlength="255" value="{{ old('observaciones', $riego->observaciones) }}" placeholder="Método de riego, notas…">
 <small class="error" role="alert">{{ $errors->first('observaciones') }}</small>
 </div>
+<div class="campo">
+<label for="sistema_riego_id">Sistema de riego <span>(opcional)</span></label>
+<select id="sistema_riego_id" name="sistema_riego_id" aria-invalid="{{ $errors->has('sistema_riego_id') ? 'true' : 'false' }}">
+<option value="">Sin asignar</option>
+@foreach ($sistemas as $sistema)
+<option value="{{ $sistema->id }}" @selected(old('sistema_riego_id', $riego->sistema_riego_id) == $sistema->id)>{{ $sistema->nombre }}</option>
+@endforeach
+</select>
+<small class="error" role="alert">{{ $errors->first('sistema_riego_id') }}</small>
+</div>
 </div>
 <div class="form-acciones">
 <button class="boton" type="submit">{{ $riego->exists ? 'Guardar cambios' : 'Guardar riego' }}</button>

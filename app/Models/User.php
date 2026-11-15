@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,6 +29,11 @@ class User extends Authenticatable
     public function parcelas(): HasMany
     {
         return $this->hasMany(Parcela::class, 'usuario_id');
+    }
+
+    public function sistemasRiego(): HasManyThrough
+    {
+        return $this->hasManyThrough(SistemaRiego::class, Parcela::class, 'usuario_id', 'parcela_id');
     }
 
     public function parcelaPrincipal(): Parcela

@@ -86,6 +86,10 @@ Registrar riego
 <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5.5h14M5 10h14M5 14.5h9M5 19h9"/><path d="M3 3h18v18H3z"/></svg></span>
 Historial
 </a>
+<a href="{{ route('sistemas.index') }}" @if (request()->routeIs('sistemas.*')) aria-current="page" @endif>
+<span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V8l8-5 8 5v12M8 20v-6h8v6M2 20h20"/><path d="M8 9h.01M16 9h.01"/></svg></span>
+Sistemas de riego
+</a>
 <a href="{{ route('parcelas.index') }}" @if (request()->routeIs('parcelas.*')) aria-current="page" @endif>
 <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17M5 20.5V9.2l7-5.7 7 5.7v11.3"/><path d="M9 20.5v-6h6v6M8 10h.01M16 10h.01"/></svg></span>
 Parcela principal

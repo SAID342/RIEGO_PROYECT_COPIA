@@ -23,6 +23,11 @@ class Parcela extends Model
         return $this->hasMany(Riego::class);
     }
 
+    public function sistemasRiego(): HasMany
+    {
+        return $this->hasMany(SistemaRiego::class, 'parcela_id');
+    }
+
     public function scopeVisiblesPara(Builder $consulta, User $usuario): Builder
     {
         return $usuario->esAdmin() ? $consulta : $consulta->where('usuario_id', $usuario->id);
