@@ -1,8 +1,9 @@
+
 @extends('layouts.app')
 @section('titulo', 'Estadísticas')
 @section('contenido')
 <div class="page-heading">
-<div><p class="eyebrow">Lecturas e historial</p><h1>Estadísticas</h1><p>Consulta datos registrados; no hay lecturas inventadas ni recibidas de hardware en esta versión.</p></div>
+<div><p class="eyebrow">Lecturas e historial</p><h1>Estadísticas</h1><p>Consulta datos registrados y las lecturas actuales de los sensores.</p></div>
 </div>
 <form class="filtros" method="GET" action="{{ route('estadisticas.index') }}">
 <div class="campo"><label for="sistema_riego_id">Sistema</label><select id="sistema_riego_id" name="sistema_riego_id"><option value="">Selecciona un sistema</option>@foreach ($sistemas as $opcion)<option value="{{ $opcion->id }}" @selected($sistema?->id === $opcion->id)>{{ $opcion->nombre }}</option>@endforeach</select></div>
@@ -19,21 +20,27 @@
 <canvas id="grafico-dias" data-etiquetas="{{ json_encode($dias) }}" data-valores="{{ json_encode($litrosPorDia) }}" role="img" aria-label="Gráfico de litros utilizados por día"></canvas>
 </div>
 </article>
-@foreach ([
-    'nivel_agua' => ['Nivel de agua', $unidadNivel],
-    'humedad_suelo' => ['Humedad del suelo', '%'],
-    'temperatura' => ['Temperatura ambiente', '°C'],
-    'humedad_ambiental' => ['Humedad ambiental', '%'],
-] as $tipo => [$titulo, $unidad])
+
 <article class="panel">
-<div class="grafico-cabecera"><div><h2>{{ $titulo }}</h2><p>Promedio de lecturas guardadas por día</p></div><span class="grafico-total">{{ $unidad }}</span></div>
-@if ($lecturasPorTipo[$tipo]->filter(fn ($valor) => $valor !== null)->isNotEmpty())
-<div class="grafico-contenedor"><canvas class="metric-chart" data-titulo="{{ $titulo }}" data-unidad="{{ $unidad }}" data-etiquetas="{{ json_encode($dias) }}" data-valores="{{ json_encode($lecturasPorTipo[$tipo]) }}" role="img" aria-label="Gráfico de {{ $titulo }} para el periodo seleccionado"></canvas></div>
-@else
-<p class="empty-note">Sin lecturas guardadas de este tipo durante el periodo seleccionado.</p>
-@endif
+<div class="grafico-cabecera">
+<div><h2>Humedad del suelo</h2><p>Última lectura del sensor</p></div>
+<span class="grafico-total" id="humedad-suelo">{{ $ultimaMedicion ? number_format((float) $ultimaMedicion->humedad_suelo, 1) : '--' }} %</span>
+</div>
 </article>
-@endforeach
+
+<article class="panel">
+<div class="grafico-cabecera">
+<div><h2>Temperatura ambiente</h2><p>Última lectura del sensor</p></div>
+<span class="grafico-total" id="temperatura">{{ $ultimaMedicion ? number_format((float) $ultimaMedicion->temperatura, 1) : '--' }} °C</span>
+</div>
+</article>
+
+<article class="panel">
+<div class="grafico-cabecera">
+<div><h2>Humedad ambiental</h2><p>Última lectura del sensor</p></div>
+<span class="grafico-total" id="humedad-ambiente">{{ $ultimaMedicion ? number_format((float) $ultimaMedicion->humedad_ambiente, 1) : '--' }} %</span>
+</div>
+</article>
 </section>
 <section class="panel">
 <div class="panel-heading"><h2>Historial de riego y cambios</h2><p class="panel-copy">Las solicitudes sin conexión no representan riego ejecutado. Los registros históricos se asocian a un sistema solo cuando se eligió expresamente al crearlos.</p></div>
@@ -58,4 +65,33 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="{{ asset('js/graficos.js') }}"></script>
+
+<script>
+async function actualizarMediciones() {
+    try {
+        const respuesta = await fetch('/api/mediciones/ultima');
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudieron obtener las mediciones');
+        }
+
+        const datos = await respuesta.json();
+
+        document.getElementById('humedad-suelo').textContent =
+            Number(datos.humedad_suelo).toFixed(1) + ' %';
+
+        document.getElementById('temperatura').textContent =
+            Number(datos.temperatura).toFixed(1) + ' °C';
+
+        document.getElementById('humedad-ambiente').textContent =
+            Number(datos.humedad_ambiente).toFixed(1) + ' %';
+
+    } catch (error) {
+        console.error('Error al actualizar las mediciones:', error);
+    }
+}
+
+actualizarMediciones();
+setInterval(actualizarMediciones, 34000);
+</script>
 @endpush

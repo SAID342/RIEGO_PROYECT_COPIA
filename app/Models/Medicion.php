@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Medicion extends Model
 {
-    protected $table = 'medicions';
+    protected $table = 'mediciones';
 
     protected $fillable = [
         'sistema_riego_id',
